@@ -6,7 +6,7 @@ RUN --mount=type=cache,target=/root/.m2 mvn -B -ntp dependency:go-offline
 COPY src ./src
 RUN --mount=type=cache,target=/root/.m2 mvn -B -ntp verify
 
-FROM eclipse-temurin:21-jre-jammy
+FROM eclipse-temurin:25-jre-jammy
 RUN groupadd --system --gid 10001 boveda \
     && useradd --system --uid 10001 --gid boveda --home-dir /app boveda \
     && (getent group 1000 >/dev/null || groupadd --gid 1000 render) \
