@@ -1,0 +1,19 @@
+spring:
+  datasource:
+    url: ${DB_URL}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+server:
+  forward-headers-strategy: framework
+  servlet:
+    session:
+      cookie:
+        secure: true
+app:
+  crypto:
+    key: ${BOVEDA_KEY}
+    require-key: true
+  storage:
+    mode: supabase
+    url: ${SUPABASE_URL}
+    secret: ${SUPABASE_SECRET_KEY}

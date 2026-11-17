@@ -1,0 +1,75 @@
+{
+  "date": "2026-11-16",
+  "java": "21",
+  "springBoot": "3.5.16",
+  "h2": {
+    "tests": 51,
+    "failures": 0,
+    "errors": 0
+  },
+  "postgresql": {
+    "version": "16.2",
+    "tests": 51,
+    "failures": 0,
+    "errors": 0
+  },
+  "browser": {
+    "passed": true,
+    "checks": [
+      "Registro e inicio de sesion en navegadores separados",
+      "Chat, actualizacion, confirmacion de lectura y texto sin ejecutar HTML",
+      "Boveda, adjunto compartido, descarga original y tercero sin permiso",
+      "Imagen cifrada con previsualizacion autorizada",
+      "Huella y revocacion: el propietario conserva acceso",
+      "Navegacion movil sin desbordamiento horizontal",
+      "Auditoria administrativa y ausencia de errores JavaScript"
+    ]
+  },
+  "suites": [
+    {
+      "suite": "com.seguridad.bovedachat.ChatSecurityIntegrationTest",
+      "tests": 21,
+      "failures": 0,
+      "errors": 0
+    },
+    {
+      "suite": "com.seguridad.bovedachat.CryptoServiceTest",
+      "tests": 8,
+      "failures": 0,
+      "errors": 0
+    },
+    {
+      "suite": "com.seguridad.bovedachat.FileInspectorTest",
+      "tests": 9,
+      "failures": 0,
+      "errors": 0
+    },
+    {
+      "suite": "com.seguridad.bovedachat.RateLimiterTest",
+      "tests": 2,
+      "failures": 0,
+      "errors": 0
+    },
+    {
+      "suite": "com.seguridad.bovedachat.SmsRegistrationIntegrationTest",
+      "tests": 1,
+      "failures": 0,
+      "errors": 0
+    },
+    {
+      "suite": "com.seguridad.bovedachat.SupabaseStorageTest",
+      "tests": 5,
+      "failures": 0,
+      "errors": 0
+    },
+    {
+      "suite": "com.seguridad.bovedachat.TwilioVerifyGatewayTest",
+      "tests": 5,
+      "failures": 0,
+      "errors": 0
+    }
+  ],
+  "lineCoveragePercent": 87.0,
+  "externalServicesTestedLive": false,
+  "dockerImageAndTrivyExecutedHere": false
+}

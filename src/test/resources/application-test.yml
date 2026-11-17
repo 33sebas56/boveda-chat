@@ -1,0 +1,22 @@
+spring:
+  datasource:
+    url: ${TEST_DB_URL:jdbc:h2:mem:bovedatest;MODE=PostgreSQL;DATABASE_TO_LOWER=TRUE;DB_CLOSE_DELAY=-1;DEFAULT_NULL_ORDERING=HIGH}
+    username: ${TEST_DB_USERNAME:sa}
+    password: ${TEST_DB_PASSWORD:}
+  thymeleaf:
+    cache: false
+app:
+  crypto:
+    key: AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=
+    require-key: true
+  storage:
+    mode: local
+    directory: target/test-files
+  bootstrap:
+    username: ''
+    password: ''
+  sms:
+    enabled: false
+logging:
+  level:
+    root: WARN

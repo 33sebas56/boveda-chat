@@ -1,0 +1,136 @@
+name: Calidad y seguridad
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  pruebas:
+    name: Java 21 - pruebas H2
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: "21"
+          cache: maven
+      - name: Ejecutar pruebas y construir JAR
+        run: chmod +x mvnw && ./mvnw -B -ntp verify
+      - name: Conservar resultados y cobertura
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: pruebas-h2
+          path: |
+            target/surefire-reports/
+            target/site/jacoco/
+          retention-days: 14
+  postgres:
+    name: Integracion PostgreSQL
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_DB: boveda_test
+          POSTGRES_USER: boveda_test
+          POSTGRES_PASSWORD: integration-only-password
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U boveda_test -d boveda_test"
+          --health-interval 5s --health-timeout 5s --health-retries 10
+    env:
+      TEST_DB_URL: jdbc:postgresql://localhost:5432/boveda_test
+      TEST_DB_USERNAME: boveda_test
+      TEST_DB_PASSWORD: integration-only-password
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: "21"
+          cache: maven
+      - name: Probar migraciones, permisos y registro sobre PostgreSQL real
+        run: chmod +x mvnw && ./mvnw -B -ntp verify
+      - if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: pruebas-postgres
+          path: target/surefire-reports/
+          retention-days: 14
+  interfaz:
+    name: Recorrido de interfaz
+    needs: pruebas
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: "21"
+          cache: maven
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Construir el JAR para el recorrido
+        run: chmod +x mvnw && ./mvnw -B -ntp -DskipTests package
+      - name: Preparar navegador
+        run: |
+          python -m pip install -r scripts/ui-requirements.txt
+          python -m playwright install --with-deps chromium
+      - name: Probar registro, chat, archivos, permisos y movil
+        run: python scripts/test-ui.py
+      - if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: recorrido-interfaz
+          path: |
+            target/ui-results.json
+            target/ui-server.log
+          retention-days: 7
+  imagen:
+    name: Imagen Docker y Trivy
+    needs: [pruebas, postgres, interfaz]
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v5
+      - name: Construir imagen (no necesita Docker en tu portatil)
+        run: docker build --pull -t boveda-chat:ci .
+      - name: Preparar reportes
+        run: mkdir -p reports && chmod 777 reports
+      - name: Escanear vulnerabilidades con Trivy
+        run: >-
+          docker run --rm
+          -v /var/run/docker.sock:/var/run/docker.sock
+          -v "$PWD/reports:/reports"
+          aquasec/trivy:0.70.0 image
+          --scanners vuln --severity HIGH,CRITICAL --ignore-unfixed
+          --format json --output /reports/trivy-image.json
+          --exit-code 1 boveda-chat:ci
+      - name: Escanear secretos y configuraciones
+        if: always()
+        run: >-
+          docker run --rm
+          -v "$PWD:/project:ro" -v "$PWD/reports:/reports"
+          aquasec/trivy:0.70.0 fs
+          --scanners secret,misconfig --severity HIGH,CRITICAL
+          --skip-dirs /project/.git --skip-dirs /project/target
+          --format json --output /reports/trivy-source.json
+          --exit-code 1 /project
+      - name: Conservar evidencia de seguridad
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: trivy
+          path: reports/*.json
+          retention-days: 14

@@ -1,0 +1,13 @@
+target/
+.local/
+.env
+.env.*
+!.env.example
+.idea/
+*.iml
+.vscode/
+*.log
+*.zip
+*.key
+*.p12
+*.jks

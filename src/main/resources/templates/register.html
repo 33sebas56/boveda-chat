@@ -1,0 +1,17 @@
+<!doctype html><html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security"><head>
+    <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#163f35"><meta name="description" content="Conversaciones privadas y documentos en un mismo lugar.">
+    <meta name="_csrf" th:content="${_csrf.token}"><meta name="_csrf_header" th:content="${_csrf.headerName}">
+    <title>Crear cuenta · Bóveda Chat</title><link rel="icon" href="/favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="/css/app.css"></head><body class="auth-body"><main class="auth-layout"><section class="auth-story"><a class="brand" href="/app" aria-label="Bóveda Chat, inicio"><svg aria-hidden="true"><use href="/icons.svg#vault"></use></svg><span>Bóveda<span class="brand-light"> Chat</span></span></a><div class="story-copy"><span class="eyebrow">UN ESPACIO PARA COMPARTIR</span><h1>Una conversación.<br>Todo en su lugar.</h1><p>Habla con tu equipo y comparte los documentos que importan, con acceso solo para las personas que elijas.</p><div class="story-illustration" aria-hidden="true"><div class="paper paper-back"></div><div class="paper paper-front"><svg><use href="/icons.svg#file"></use></svg><span>Compartido contigo</span><div class="paper-line"></div><div class="paper-line short"></div></div><div class="story-bubble"><svg><use href="/icons.svg#check"></use></svg> Recibido, gracias.</div><div class="story-lock"><svg><use href="/icons.svg#lock"></use></svg></div></div></div><p class="story-footer"><svg><use href="/icons.svg#lock"></use></svg> Tu cuenta. Tus conversaciones. Tus archivos.</p></section><section class="auth-panel"><div class="auth-card">
+<span class="eyebrow">TU NUEVO ESPACIO</span><h2>Crea tu cuenta</h2><p class="muted">Elige cómo quieres aparecer en tus conversaciones.</p>
+<div class="notice danger" role="alert" th:if="${error}" th:text="${error}"></div>
+<form th:action="@{/registro}" th:object="${form}" method="post" class="stack compact">
+  <div class="notice danger" th:if="${#fields.hasAnyErrors()}"><span th:each="e : ${#fields.allErrors()}" th:text="${e}" class="block"></span></div>
+  <label>Nombre<input th:field="*{displayName}" autocomplete="name" required minlength="2" maxlength="60" placeholder="Cómo te llamas"></label>
+  <label>Usuario<input th:field="*{username}" autocomplete="username" required pattern="[a-z0-9_]{3,24}" maxlength="24" placeholder="ejemplo: sebas_01"><small>De 3 a 24 letras minúsculas, números o guiones bajos.</small></label>
+  <label th:if="${smsEnabled}">Celular con indicativo<input th:field="*{phone}" type="tel" autocomplete="tel" required maxlength="20" placeholder="+573001234567"><small>Te enviaremos un código para verificar que es tuyo.</small></label>
+  <label>Contraseña<input name="password" type="password" autocomplete="new-password" required minlength="12" maxlength="72" placeholder="Al menos 12 caracteres"></label>
+  <label>Repite la contraseña<input name="confirmation" type="password" autocomplete="new-password" required minlength="12" maxlength="72" placeholder="Una vez más"></label>
+  <button class="button primary wide" type="submit" th:text="${smsEnabled ? 'Crear cuenta y verificar celular' : 'Crear mi cuenta'}">Crear mi cuenta</button>
+</form><p class="auth-switch">¿Ya tienes cuenta? <a href="/login">Inicia sesión</a></p>
+</div><p class="auth-footer">Bóveda Chat · Un lugar para tus conversaciones</p></section></main></body></html>

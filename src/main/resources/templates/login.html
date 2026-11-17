@@ -1,0 +1,18 @@
+<!doctype html><html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security"><head>
+    <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#163f35"><meta name="description" content="Conversaciones privadas y documentos en un mismo lugar.">
+    <meta name="_csrf" th:content="${_csrf.token}"><meta name="_csrf_header" th:content="${_csrf.headerName}">
+    <title>Iniciar sesión · Bóveda Chat</title><link rel="icon" href="/favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="/css/app.css"></head><body class="auth-body"><main class="auth-layout"><section class="auth-story"><a class="brand" href="/app" aria-label="Bóveda Chat, inicio"><svg aria-hidden="true"><use href="/icons.svg#vault"></use></svg><span>Bóveda<span class="brand-light"> Chat</span></span></a><div class="story-copy"><span class="eyebrow">UN ESPACIO PARA COMPARTIR</span><h1>Una conversación.<br>Todo en su lugar.</h1><p>Habla con tu equipo y comparte los documentos que importan, con acceso solo para las personas que elijas.</p><div class="story-illustration" aria-hidden="true"><div class="paper paper-back"></div><div class="paper paper-front"><svg><use href="/icons.svg#file"></use></svg><span>Compartido contigo</span><div class="paper-line"></div><div class="paper-line short"></div></div><div class="story-bubble"><svg><use href="/icons.svg#check"></use></svg> Recibido, gracias.</div><div class="story-lock"><svg><use href="/icons.svg#lock"></use></svg></div></div></div><p class="story-footer"><svg><use href="/icons.svg#lock"></use></svg> Tu cuenta. Tus conversaciones. Tus archivos.</p></section><section class="auth-panel"><div class="auth-card">
+<span class="eyebrow">BIENVENIDO DE NUEVO</span><h2>Entra a tu espacio</h2><p class="muted">Continúa donde dejaste la conversación.</p>
+<div class="notice danger" role="alert" th:if="${param.error}">No pudimos iniciar sesión. Revisa tus datos o termina la verificación pendiente.</div>
+<div class="notice" role="status" th:if="${param.registro}">Tu cuenta está lista. Ya puedes iniciar sesión.</div>
+<div class="notice" role="status" th:if="${param.verificado}">Celular verificado. Ya puedes iniciar sesión.</div>
+<div class="notice" role="status" th:if="${param.salida}">Cerraste la sesión correctamente.</div>
+<form th:action="@{/login}" method="post" class="stack">
+  <label><span th:text="${smsEnabled ? 'Usuario o celular' : 'Usuario'}">Usuario</span><input name="username" autocomplete="username" required maxlength="100" placeholder="Tu usuario"></label>
+  <label>Contraseña<input type="password" name="password" autocomplete="current-password" required maxlength="100" placeholder="Tu contraseña"></label>
+  <button class="button primary wide" type="submit">Iniciar sesión <svg><use href="/icons.svg#arrow"></use></svg></button>
+</form>
+<p class="auth-switch">¿Primera vez por aquí? <a href="/registro">Crea tu cuenta</a></p>
+<p class="small muted" th:if="${smsEnabled}"><a href="/verificar/retomar">Retomar una verificación pendiente</a></p>
+</div><p class="auth-footer">Bóveda Chat · Un lugar para tus conversaciones</p></section></main></body></html>
